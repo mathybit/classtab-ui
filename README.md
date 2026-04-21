@@ -39,7 +39,7 @@ The simplest way to view the UI is to run a local HTTP server.  Two common optio
 python -m http.server 8000
 ```
 
-Open your browser to `http://localhost:8000/index4.html`.
+Open your browser to `http://localhost:8000/index.html`.
 
 #### Node.js (http-server)
 
@@ -50,7 +50,7 @@ npm install -g http-server
 http-server -p 8000
 ```
 
-Again, visit `http://localhost:8000/index4.html`.
+Again, visit `http://localhost:8000/index.html`.
 
 ### 3. Using the UI
 
@@ -64,8 +64,8 @@ Again, visit `http://localhost:8000/index4.html`.
 1. **Download the original Classtab page** – the raw HTML was saved locally.
 2. **Split the page** – `py_split_authors.py` parsed the HTML and created a set of files in the `songs_html_chunks` directory (each ~500 lines of code).  These files are not committed to the repo.
 3. **Process with LLM** – `py_process_all_llm.py` ran a language‑model pipeline on the chunks, producing `songs_json` and `songs_data_raw.js`.
-4. **Clean up** – `py_clean_songs.py` cleaned author and title fields, producing `songs_data.js`, which is used by `index4.html`.
-5. **Manual tweaks** – the UI was built and the file renamed to `index4.html`.
+4. **Clean up** – `py_clean_songs.py` cleaned author and title fields, producing `songs_data.js`, which is used by `index.html`.
+5. **Manual tweaks** – the UI was built and the file renamed to `index.html`.
 
 Feel free to explore the scripts if you want to regenerate the data or adapt the pipeline for other sources.
 
