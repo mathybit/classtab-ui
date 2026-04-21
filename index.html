@@ -95,9 +95,11 @@
     text-align: center;
     vertical-align: middle;
   }
-  /* Make the checkmarks a bit larger */
-  .song-table td:nth-child(3), .song-table td:nth-child(4) {
+  /* Make the checkmarks a bit larger and center them */
+  .easy-cell, .lhf-cell {
     font-size: 1.2em;
+    text-align: center;
+    vertical-align: middle;
   }
   .author-border {border-bottom: 3px solid #333 !important;}
   /* Thicker bottom border for rows that contain an author cell */
@@ -125,7 +127,7 @@
 </div>
 
 <script type="module">
-  import { songsData } from './songs_data_clean.js';
+  import { songsData } from './songs_data.js';
   const authorInput = document.getElementById('authorInput');
   const easyCheckbox = document.getElementById('easyCheckbox');
   const videoCheckbox = document.getElementById('videoCheckbox');
@@ -269,11 +271,13 @@
 
         // Easy column
         const tdEasy = document.createElement('td');
+        tdEasy.classList.add('easy-cell');
         tdEasy.textContent = song.easy ? '✓' : '';
         tr.appendChild(tdEasy);
 
         // LHF column
         const tdLhf = document.createElement('td');
+        tdLhf.classList.add('lhf-cell');
         tdLhf.textContent = song.lhf ? '✓' : '';
         tr.appendChild(tdLhf);
 
