@@ -1,0 +1,12 @@
+.vscode/
+__pycache__/
+
+midi/
+songs_authors/
+songs_html_chunks/
+songs_json/
+tabs/
+
+prompt.txt
+songs.htm
+songs_data_raw.js
