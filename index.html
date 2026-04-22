@@ -6,6 +6,24 @@
 <style>
   body {font-family: sans-serif; margin: 20px;}
 
+  /* Layout */
+  .main-container {
+    display: flex;
+    gap: 10px;
+    height: calc(100vh - 40px);
+  }
+  /* New column styles */
+  .left-column, .right-column {
+    flex: 1;          /* equal width by default */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;        /* space between filters and table */
+  }
+  /* Give the right column a little more room */
+  .right-column {
+    flex: 1.3;          /* 2 × the width of the left column */
+  }
+
   /* ---------- Filters ---------- */
   .filters {
     margin-bottom: 12px;
@@ -59,15 +77,29 @@
     background: #d32f2f;
   }
 
-  /* Layout */
-  .main-container {display: flex; gap: 10px; height: calc(100vh - 120px);}
-  #songTableContainer {flex: 1; overflow: auto; height: 100%;}
-  .content-frame {flex: 1; border: 1px solid #ccc; padding: 10px; overflow: auto;
-                  font-family: monospace; white-space: pre-wrap; font-size: var(--frame-font-size);}
+  #songTableContainer {
+    flex: 1; 
+    overflow: auto; 
+    height: 100%;
+  }
+  .content-frame {
+    flex: 1; 
+    border: 1px solid #ccc; 
+    padding: 10px; 
+    overflow: auto;
+    font-family: monospace; 
+    white-space: pre-wrap; 
+    font-size: var(--frame-font-size);
+  }
   
   /* Table */
   .song-table {width: 100%; border-collapse: collapse; table-layout: fixed;}
-  .song-table th, .song-table td {border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: top;}
+  .song-table th, .song-table td {
+    border: 1px solid #ccc; 
+    padding: 8px; 
+    text-align: left; 
+    vertical-align: top;
+  }
   .song-table th {background-color: #f2f2f2; vertical-align: middle;}
 
   /* Column widths */
@@ -80,7 +112,9 @@
   
   /* Author column */
   .song-table th:nth-child(1), .song-table td:nth-child(1) {
-    width: var(--author-width); word-wrap: break-word; white-space: normal;
+    width: var(--author-width); 
+    word-wrap: break-word; 
+    white-space: normal;
   }
   /* Title column */
   .song-table th:nth-child(2), .song-table td:nth-child(2) {
@@ -108,23 +142,45 @@
   .author-cell {border-bottom: 3px solid #333 !important;}
   /* Thicker bottom border for the other cells in the last row of each author group */
   .author-row td:not(.author-cell) {border-bottom: 3px solid #333 !important;}
+  
+  /* Larger bookmark icon, keep other text unchanged */
+  .bookmark-btn {
+    font-size: 1.3em;      /* or whatever size you prefer */
+    line-height: 1;        /* keep vertical alignment */
+    padding: 0 4px;        /* optional spacing */
+    margin-right: 5px;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+  .tab-link {
+    word-wrap: break-word; 
+  }
 </style>
 </head>
 <body>
-<h1>Classtab</h1>
-<div class="filters">
-  <label>Author: <input type="text" id="authorInput" list="authorList" placeholder="Type or click" autocomplete="off" /></label>
-  <datalist id="authorList"></datalist>
-  <label><input type="checkbox" id="easyCheckbox" /> Easy</label>
-  <label><input type="checkbox" id="videoCheckbox" /> Video</label>
-  <label><input type="checkbox" id="bookmarkCheckbox" /> Bookmarks</label>
-  <button id="clearBtn">Clear</button>
-</div>
 <div class="main-container">
-  <div id="songTableContainer">
-    <table id="songTable" class="song-table"></table>
+  <!-- Left column -->
+  <div class="left-column">
+    <h1>Classtab</h1>
+    <div class="filters">
+      <label>Author: <input type="text" id="authorInput" list="authorList" placeholder="Type or click" autocomplete="off" /></label>
+      <datalist id="authorList"></datalist>
+      <label><input type="checkbox" id="easyCheckbox" /> Easy</label>
+      <label><input type="checkbox" id="videoCheckbox" /> Video</label>
+      <label><input type="checkbox" id="bookmarkCheckbox" /> Bookmarks</label>
+      <button id="clearBtn">Clear</button>
+    </div>
+
+    <div id="songTableContainer">
+      <table id="songTable" class="song-table"></table>
+    </div>
   </div>
-  <div id="contentFrame" class="content-frame"></div>
+
+  <!-- Right column -->
+  <div class="right-column">
+    <div id="contentFrame" class="content-frame"></div>
+  </div>
 </div>
 
 <script type="module">
@@ -243,17 +299,14 @@
           tr.classList.add('author-row');
         }
 
+        // Title column with bookmark button
         const tdTitle = document.createElement('td');
         const songId = getSongId(song);
         const bookmarks = getBookmarks();
 
         const bookmarkBtn = document.createElement('button');
+        bookmarkBtn.classList.add('bookmark-btn'); 
         bookmarkBtn.textContent = bookmarks.has(songId) ? '★' : '☆';
-        bookmarkBtn.style.border = 'none';
-        bookmarkBtn.style.background = 'none';
-        bookmarkBtn.style.cursor = 'pointer';
-        bookmarkBtn.style.padding = '0';
-        bookmarkBtn.style.marginRight = '5px';
         bookmarkBtn.onclick = (e) => {
           e.stopPropagation();
           toggleBookmark(song);
@@ -262,12 +315,14 @@
 
         const link = document.createElement('a');
         link.href = '#';
+        link.className = 'tab-link';
         link.textContent = song.title;
         link.onclick = (e) => {
           e.preventDefault();
           loadTabContent(song.tab);
         };
         tdTitle.appendChild(link);
+
         tr.appendChild(tdTitle);
 
         // Easy column

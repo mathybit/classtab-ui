@@ -37337,6 +37337,20 @@ export const songsData = [
   "author_alternate": "Tatiana Stachak"
 },
 {
+  "author": "Tatiana Stachak",
+  "author_years": "(1973-)",
+  "title": "Kurpie Etude",
+  "tab": "stachak_kurpie_etude.txt",
+  "midi": "",
+  "video": "https://www.youtube.com/watch?v=xLd1U2pD80E",
+  "artist": "Tatiana Stachak",
+  "easy": true,
+  "lhf": false,
+  "proper": true,
+  "author_id": "535",
+  "author_alternate": "Tatiana Stachak"
+},
+{
   "author": "Nikola Starcevic",
   "author_years": "(1940-)",
   "title": "Asiana III",
