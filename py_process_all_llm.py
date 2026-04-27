@@ -2,10 +2,10 @@ import json
 import math
 from natsort import natsorted
 import os
-import re
 import requests
 
 from prompts import prompt_template
+from utils import parse_response_text
 
 INPUT_DIR = './songs_authors'
 OUTPUT_DIR = './songs_json'
@@ -18,81 +18,9 @@ OLLAMA_MAX_TOKENS = 32000
 OLLAMA_TEMPERATURE = 0.0
 
 # New global variables for multiple LLM calls per song
-N_CALLS_PER_SONG = 7
-PERCENT_THRESH = 0.56
-THRESHOLD = math.ceil(N_CALLS_PER_SONG * PERCENT_THRESH)
-
-
-def parse_response_text(response_text, expected_type='object'):
-    text = response_text.strip()
-
-    # Strategy 1: Direct JSON parsing
-    try:
-        return json.loads(text)
-    except:
-        pass
-    
-    # Remove common prefixes/suffixes and try again
-    text = text.replace('```json', '').replace('```', '').strip()
-    try:
-        return json.loads(text)
-    except:
-        pass
-    
-    if expected_type == 'list':
-        array_pattern = r'\[[\s\S]*?\]'
-        matches = re.findall(array_pattern, text)
-
-        for match in matches:
-            try:
-                result = json.loads(match)
-                if isinstance(result, list):
-                    return result
-            except:
-                continue
-    
-    elif expected_type == 'object':
-        object_pattern = r'\{[\s\S]*?\}'
-        matches = re.findall(object_pattern, text)
-
-        for match in matches:
-            try:
-                result = json.loads(match)
-                if isinstance(result, dict):
-                    return result
-            except:
-                continue
-    
-    try:
-        if expected_type == 'list':
-            start_char, end_char = '[', ']'
-        else:
-            start_char, end_char = '{', '}'
-        
-        start_idx = text.find(start_char)
-        if start_idx != -1:
-            bracket_count = 0
-            for idx, char in enumerate(text[start_idx:], start_idx):
-                if char == start_char:
-                    bracket_count += 1
-                elif char == end_char:
-                    bracket_count -= 1
-                    if bracket_count == 0:
-                        json_str = text[start_idx: idx+1]
-                        return json.loads(json_str)
-    except:
-        pass
-    
-    lines = text.split('\n')
-    for line in lines:
-        line = line.strip()
-        if line.startswith(('[', '{')) and line.endswith((']', '}')):
-            try:
-                return json.loads(line)
-            except:
-                continue
-    
-    return {}
+N_CALLS_PER_AUTHOR = 5  #7
+#PERCENT_THRESH = 0.56
+THRESHOLD = 2  #math.ceil(N_CALLS_PER_AUTHOR * PERCENT_THRESH)
 
 
 def call_llm(html_text):
@@ -113,7 +41,7 @@ def call_llm(html_text):
     return response_dict
 
 
-def parse_single_song(filename, input_dir):
+def parse_single_author(filename, input_dir):
     # Read the input file
     input_path = os.path.join(input_dir, filename)
     with open(input_path, 'r', encoding='utf-8') as f:
@@ -152,12 +80,12 @@ def parse_single_song(filename, input_dir):
 
 
 
-def parse_songs(input_dir=INPUT_DIR, output_dir=OUTPUT_DIR):
-    """Parse each HTML file, calling the LLM multiple times per song.
+def parse_authors(input_dir=INPUT_DIR, output_dir=OUTPUT_DIR):
+    """Parse each HTML file, calling the LLM multiple times per author.
 
-    For each song in the input file, the LLM is queried ``N_CALLS_PER_SONG``
+    For each author in the input file, the LLM is queried ``N_CALLS_PER_AUTHOR``
     times.  The responses are aggregated and only songs that appear in at
-    least ``ceil(N_CALLS_PER_SONG * PERCENT_THRESH)`` of the calls are
+    least ``ceil(N_CALLS_PER_AUTHOR * PERCENT_THRESH)`` of the calls are
     retained.  The resulting JSON structure is written to ``output_dir``.
     """
     input_files = [f for f in os.listdir(input_dir) if f.lower().endswith('.htm') or f.lower().endswith('.html')]
@@ -172,10 +100,10 @@ def parse_songs(input_dir=INPUT_DIR, output_dir=OUTPUT_DIR):
         # Aggregate responses for each song in a single loop
         song_counts = {}
         song_data_map = {}
-        for j in range(N_CALLS_PER_SONG):
-            print('\rProgress: {:.1f}%'.format(float(i * N_CALLS_PER_SONG + j) / (len(sorted_files) * N_CALLS_PER_SONG) * 100), end='')
+        for j in range(N_CALLS_PER_AUTHOR):
+            print('\rProgress: {:.1f}%'.format(float(i * N_CALLS_PER_AUTHOR + j) / (len(sorted_files) * N_CALLS_PER_AUTHOR) * 100), end='')
             try:
-                resp = parse_single_song(filename, input_dir=input_dir)
+                resp = parse_single_author(filename, input_dir=input_dir)
             except Exception:
                 continue
             if not isinstance(resp, dict) or 'songs' not in resp:
@@ -247,10 +175,12 @@ if __name__ == "__main__":
     #     print(type(result['response']), result['response'])
     print('Working directory:', os.getcwd())
     
-    # parsed_response = parse_single_song('3.htm', input_dir=INPUT_DIR)
+    # parsed_response = parse_single_author('3.htm', input_dir=INPUT_DIR)
     # print(json.dumps(parsed_response, indent=2))
 
-    #parse_songs(input_dir=INPUT_DIR, output_dir=OUTPUT_DIR)
+    print('Source directory:', INPUT_DIR)
+    print('Output directory:', OUTPUT_DIR)
+    parse_authors(input_dir=INPUT_DIR, output_dir=OUTPUT_DIR)
 
     # Modify the beginning of the output file (the '[' line) to say the following:
     # export const songsData = [

@@ -65,10 +65,15 @@ EXAMPLE 3
 <a href="ayala_el_sureno_malambo.txt">El Sure&ntilde;o - Malambo</a> (El Sureno) - <a href="ayala_el_sureno_malambo.mid">MIDI</a><br>
 <a href="ayala_pequeno_preludio.txt">Peque&ntilde;o Preludio (Short Prelude)</a> - <a href="ayala_pequeno_preludio.mid">MIDI</a> - <b>LHF</b> - [<b>easy</b>] - [vid: <a href="https://www.youtube.com/watch?v=FiWKrR_EUOQ">Adri&aacute;n Bassi</a>]<br>
 
-In these examples, we have 3 authors with specified years during which they lived:
+3XAMPLE 4
+<b>Matteo Carcassi</b>&#160; (1792-1853)<br>
+<a href="carcassi_op60_no07_study_in_am.txt">Op 60 Study No 7 in Am</a> - from 25 Studi Melodici e Progressivi - <a href="carcassi_op60_no07_study_in_am.mid">MIDI</a> - [<b>easy</b>] - [vid: <a href="https://www.youtube.com/watch?v=PYdIUmWIiUU&t=10s">Thu Le</a>]<br>
+
+In these examples, we have 4 authors with specified years during which they lived:
 - EXAMPLE 1: "Joan Ambrosio Dalza (Joanambrosio Dalza)", who lived during "(1483-1533)", and has 2 songs
 - EXAMPLE 2: "Malcolm Arnold", who lived "(1921-2006)", and has one song
 - EXAMPLE 3: "Hector Ayala &#160;(H&eacute;ctor Ayala)", who lived "(1914-1990)", and has 2 songs
+- EXAMPLE 4: "Matteo Carcassi", who lived "(1792-1853)", and has one song
 
 
 ==== EXPECTED OUTPUT ====
@@ -148,6 +153,25 @@ EXAMPLE 3 output:
             "artist": "",
             "easy": true,  # this song is listed as "easy"
             "lhf": true,  # this song also has LHF mentioned
+            "proper": true
+        }}
+    ]
+}}
+
+
+EXAMPLE 4 output:
+{{
+    "songs": [
+        {{
+            "author": "Matteo Carcassi",
+            "author_years": "(1792-1853)",
+            "title": "Op 60 Study No 7 in Am",  # we can drop the "from 25 Studi Melodici e Progressivi" part of the title, since it is not between the <a href=".txt"> </a> tags
+            "tab": "carcassi_op60_no07_study_in_am.txt",
+            "midi": "carcassi_op60_no07_study_in_am.mid",
+            "video": "https://www.youtube.com/watch?v=PYdIUmWIiUU&t=10s",
+            "artist": "Thu Le",
+            "easy": true,
+            "lhf": false,
             "proper": true
         }}
     ]
