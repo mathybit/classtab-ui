@@ -520,7 +520,7 @@
       const text = await response.text();
       // Update title
       const titleDiv = document.getElementById('contentFrameTitle');
-      titleDiv.textContent = title;
+      titleDiv.innerHTML = `<a href="tabs/${tabFile}" target="_blank">${title}</a>`;
       // Show content
       contentFrame.textContent = text;
     } catch (e) {
